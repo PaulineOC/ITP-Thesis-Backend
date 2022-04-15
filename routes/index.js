@@ -3,7 +3,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.send('Abhinav');
+  res.redirect('/home');
 });
 
 module.exports = router;
