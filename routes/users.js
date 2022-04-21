@@ -13,7 +13,7 @@ router.get('/get-screenshots', function(req, res, next) {
    * UserId
    * Array of screenshots in base64 string
    */
-  res.send('Get screenshots correctly');
+  res.JSON({test: 'get-screenshots'});
 });
 
 
@@ -23,7 +23,7 @@ router.post('/upload-screenshots', function(req, res, next) {
    * UserId
    * Array of screenshots in base64 string
    */
-  res.send('Upload screenshots correctly');
+  res.JSON({test: 'upload-screenshots'});
 });
 
 
