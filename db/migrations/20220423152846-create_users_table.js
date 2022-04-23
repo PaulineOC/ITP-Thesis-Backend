@@ -13,6 +13,10 @@ module.exports = {
         type: Sequelize.STRING,
         field: "username"
       },
+      savedArt: {
+        type: Sequelize.ARRAY(Sequelize.STRING),
+        field: "saved_art"
+      },
       overheadImages: {
         type: Sequelize.ARRAY(Sequelize.STRING),
         field: "overhead_images"

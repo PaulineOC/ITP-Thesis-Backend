@@ -37,6 +37,7 @@ module.exports = (sequelize, DataTypes) => {
     };
     User.init({
         username: DataTypes.STRING,
+        savedArt: Data.Types.ARRAY(DataTypes.STRING),
         overheadImages: DataTypes.ARRAY(DataTypes.STRING),
         wallImages: DataTypes.ARRAY(DataTypes.STRING),
     }, {
