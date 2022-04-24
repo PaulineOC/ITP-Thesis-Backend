@@ -31,10 +31,8 @@ module.exports = {
         port: DB_PROD_PORT,
         database: DB_PROD_DATABASE_NAME,
         dialect: "postgres",
-        ssl: true,
         dialectOptions: {
             ssl: {
-                require: true,
                 rejectUnauthorized: false
             }
         },
