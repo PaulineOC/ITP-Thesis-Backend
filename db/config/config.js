@@ -38,7 +38,10 @@ module.exports = {
             ssl:{
             "require":true,
             "rejectUnauthorized": false,
-            ca: fs.readFileSync(__dirname + '/ca-cert.crt'),
+            ca:
+                process.env.NODE_ENV === 'production' ?
+                    process.env.CA_CERT:
+                    fs.readFileSync(__dirname + '/ca-cert.crt'),
             }
         },
         // ssl: {
