@@ -13,6 +13,10 @@ module.exports = {
         type: Sequelize.STRING,
         field: "username"
       },
+      uniqueId: {
+        type: Sequelize.STRING,
+        field: "unique_id"
+      },
       savedArt: {
         type: Sequelize.ARRAY(Sequelize.STRING),
         field: "saved_art",
