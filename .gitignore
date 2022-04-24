@@ -63,3 +63,5 @@ typings/
 /.idea
 
 /node_modules
+
+ca-cert.crt

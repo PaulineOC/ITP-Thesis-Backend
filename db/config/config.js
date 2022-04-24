@@ -33,7 +33,9 @@ module.exports = {
         dialect: "postgres",
         ssl: {
             rejectUnauthorized: false,
-            ca: DB_CA_CERT,
+            ca: process.env.NODE_ENV === PRODUCTION
+                ? process.env.DB_CA_CERT
+                : fs.readFileSync("ca_cert.crt").toString(),
         },
         define: {
             underscored: true
