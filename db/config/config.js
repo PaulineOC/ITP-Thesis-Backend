@@ -31,6 +31,9 @@ module.exports = {
         port: DB_PROD_PORT,
         database: DB_PROD_DATABASE_NAME,
         dialect: "postgres",
+        dialectOptions: {
+            "ssl": true
+        },
         ssl: {
             rejectUnauthorized: false,
             ca: process.env.NODE_ENV === 'production'
@@ -42,9 +45,3 @@ module.exports = {
         }
     }
 };
-
-//options: {
-//   dialect: "postgres",
-//   native: true, # adding this maybe breaks on hobby dyno
-
-// }
