@@ -1,4 +1,5 @@
 require('dotenv').config();
+const fs = require('fs');
 const {
     DB_DEV_USERNAME,
     DB_DEV_PASSWORD,
@@ -9,7 +10,9 @@ const {
     DB_PROD_PASSWORD,
     DB_PROD_HOST,
     DB_PROD_PORT,
-    DB_PROD_DATABASE_NAME} = process.env;
+    DB_PROD_DATABASE_NAME,
+    DB_CA_CERT
+} = process.env;
 
 
 module.exports = {
@@ -32,14 +35,16 @@ module.exports = {
         database: DB_PROD_DATABASE_NAME,
         dialect: "postgres",
         dialectOptions: {
-            "ssl": true
+            ssl:{
+            "require":true,
+            "rejectUnauthorized": false,
+            ca: fs.readFileSync(__dirname + '/ca-cert.crt'),
+            }
         },
-        ssl: {
-            rejectUnauthorized: false,
-            ca: process.env.NODE_ENV === 'production'
-                ? process.env.DB_CA_CERT
-                : fs.readFileSync("ca_cert.crt").toString(),
-        },
+        // ssl: {
+        //     rejectUnauthorized: false,
+        //     ca: fs.readFileSync(__dirname + '/ca-cert.crt')
+        // },
         define: {
             underscored: true
         }

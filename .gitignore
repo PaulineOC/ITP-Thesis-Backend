@@ -64,4 +64,4 @@ typings/
 
 /node_modules
 
-ca-cert.crt
+db/config/ca-cert.crt
