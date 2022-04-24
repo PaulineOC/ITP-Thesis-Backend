@@ -15,15 +15,18 @@ module.exports = {
       },
       savedArt: {
         type: Sequelize.ARRAY(Sequelize.STRING),
-        field: "saved_art"
+        field: "saved_art",
+        default: [],
       },
       overheadImages: {
         type: Sequelize.ARRAY(Sequelize.STRING),
-        field: "overhead_images"
+        field: "overhead_images",
+        default: [],
       },
       wallImages: {
         type: Sequelize.ARRAY(Sequelize.STRING),
-        field: "wall_images"
+        field: "wall_images",
+        default: [],
       },
       createdAt: {
         allowNull: false,
