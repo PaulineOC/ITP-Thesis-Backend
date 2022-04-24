@@ -33,7 +33,7 @@ module.exports = {
         dialect: "postgres",
         ssl: {
             rejectUnauthorized: false,
-            ca: process.env.NODE_ENV === PRODUCTION
+            ca: process.env.NODE_ENV === 'production'
                 ? process.env.DB_CA_CERT
                 : fs.readFileSync("ca_cert.crt").toString(),
         },
