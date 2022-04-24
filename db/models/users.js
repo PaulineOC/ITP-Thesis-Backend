@@ -16,15 +16,10 @@ module.exports = (sequelize, DataTypes) => {
             //this.hasMany(models.Interactive);
         }
 
-        static async createUser(userToCreate){
+        static async createUser(userName, unique){
             try {
                 const result = await sequelize.transaction(async (t) => {
-
-                    const newUser = this.build(userToCreate);
-                    // newUser.savedArt = [];
-                    // newUser.wallImages = [];
-                    // newUser.overheadImages = [];
-
+                    const newUser = this.build({ username: userName, uniqueId: unique});
                     const createdUser = await newUser.save({transaction: t});
                     if(createdUser.id === undefined || createdUser.id === null){
                         throw new Error('CreatedUser has null or undefined id');
@@ -39,22 +34,32 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
-        static async getUserById(userId ){
+        static async getUserById(userId, unique, transaction ){
             const user = await this.findOne({
                 where:{
                     id: userId,
+                    uniqueId: unique,
                 }
             });
             return user;
         }
 
-        static async addToUserSavedArt(userId, artToAdd){
+        static async getAllUsersByUsername(name){
+            const allUsers = await this.findAll({
+                where:{
+                    username: name,
+                },
+                returning: true,
+            });
+            return allUsers;
+        }
+
+        static async addToUserSavedArt(userId, artToAdd, unique){
             try {
                 const result = await sequelize.transaction(async (t) => {
 
                     const user = await this.getUserById(
-                        userId,
-                        { transaction: t}
+                        userId, unique
                     );
                     if(_.isEmpty(user)){
                         throw new Error('UserId has null or undefined id');
@@ -78,6 +83,7 @@ module.exports = (sequelize, DataTypes) => {
                             returning: true,
                             where: {
                                 id: userId,
+                                uniqueId: unique,
                             },
                             transaction: t,
                         }
@@ -92,13 +98,13 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
-        static async removeFromUserSavedArt(userId, artToRemove){
+        static async removeFromUserSavedArt(userId, artToRemove, unique){
             try {
                 const result = await sequelize.transaction(async (t) => {
 
                     const user = await this.getUserById(
                         userId,
-                        { transaction: t}
+                        unique,
                     );
                     if(_.isEmpty(user)){
                         throw new Error('UserId has null or undefined id');
@@ -123,6 +129,7 @@ module.exports = (sequelize, DataTypes) => {
                             returning: true,
                             where: {
                                 id: userId,
+                                uniqueId: unique,
                             },
                             transaction: t,
                         }
@@ -137,13 +144,13 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
-        static async updateAllUserImages(userId, wallImagesToAdd, overheadImagesToAdd ){
+        static async updateAllUserImages(userId, wallImagesToAdd, overheadImagesToAdd, unique ){
             try {
                 const result = await sequelize.transaction(async (t) => {
 
                     const user = await this.getUserById(
                         userId,
-                        { transaction: t}
+                        unique
                     );
                     if(_.isEmpty(user)){
                         throw new Error('UserId has null or undefined id');
@@ -176,6 +183,7 @@ module.exports = (sequelize, DataTypes) => {
                             returning: true,
                             where: {
                                 id: userId,
+                                uniqueId: unique,
                             },
                             transaction: t,
                         }
@@ -190,13 +198,13 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
-        static async updateUserWallImages(userId, userPhotos ){
+        static async updateUserWallImages(userId, userPhotos, unique ){
             try {
                 const result = await sequelize.transaction(async (t) => {
 
                     const user = await this.getUserById(
                         userId,
-                        { transaction: t}
+                        unique,
                     );
                     if(_.isEmpty(user)){
                         throw new Error('UserId has null or undefined id');
@@ -218,6 +226,7 @@ module.exports = (sequelize, DataTypes) => {
                             returning: true,
                             where: {
                                 id: userId,
+                                uniqueId: unique,
                             },
                             transaction: t,
                         }
@@ -232,13 +241,13 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
-        static async updateUserOverheadImages(userId, userPhotos ){
+        static async updateUserOverheadImages(userId, userPhotos, unique ){
             try {
                 const result = await sequelize.transaction(async (t) => {
 
                     const user = await this.getUserById(
                         userId,
-                        { transaction: t}
+                        unique,
                     );
                     if(_.isEmpty(user)){
                         throw new Error('UserId has null or undefined id');
@@ -254,11 +263,13 @@ module.exports = (sequelize, DataTypes) => {
                     }
                     const updatedUserOverheadImgs = await this.update(
                         {
-                            wallImages: updatedOverheadImgs,
+                            overheadImages: updatedOverheadImgs,
                         },
                         {
+                            returning: true,
                             where: {
                                 id: userId,
+                                uniqueId: unique,
                             },
                             transaction: t,
                         }
@@ -273,10 +284,10 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
-
     };
     User.init({
         username: DataTypes.STRING,
+        uniqueId: DataTypes.STRING,
         savedArt: DataTypes.ARRAY(DataTypes.STRING),
         overheadImages: DataTypes.ARRAY(DataTypes.STRING),
         wallImages: DataTypes.ARRAY(DataTypes.STRING),

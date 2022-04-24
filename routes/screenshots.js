@@ -13,7 +13,7 @@ router.post('/bulk-create-all-images', async function(req, res, next) {
      * UserId
      * Array of screenshots in base64 string
      */
-    const updatedUser = await UserModel.updateAllUserImages(user.id, user.wallImages, user.overheadImages);
+    const updatedUser = await UserModel.updateAllUserImages(user.id, user.wallImages, user.overheadImages, user.uniqueId);
     res.send(updatedUser);
 });
 
@@ -25,7 +25,7 @@ router.post('/bulk-create-wall-images', async function(req, res, next) {
      * UserId
      * Array of screenshots in base64 string
      */
-    const updatedUser = await UserModel.updateUserWallImages(user.id, user.wallImages);
+    const updatedUser = await UserModel.updateUserWallImages(user.id, user.wallImages, user.uniqueId);
     res.send(updatedUser);
 });
 
@@ -37,7 +37,7 @@ router.post('/bulk-create-overhead-images', async function(req, res, next) {
      * UserId
      * Array of screenshots in base64 string
      */
-    const updatedUser = await UserModel.updateUserOverheadImages(user.id, user.overheadImages);
+    const updatedUser = await UserModel.updateUserOverheadImages(user.id, user.overheadImages, user.uniqueId);
     res.send(updatedUser);
 });
 
