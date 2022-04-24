@@ -31,8 +31,18 @@ module.exports = {
         port: DB_PROD_PORT,
         database: DB_PROD_DATABASE_NAME,
         dialect: "postgres",
+        ssl: true,
+        dialectOptions: {
+            ssl: true
+        },
         define: {
             underscored: true
         }
     }
 };
+
+//options: {
+//   dialect: "postgres",
+//   native: true, # adding this maybe breaks on hobby dyno
+
+// }
