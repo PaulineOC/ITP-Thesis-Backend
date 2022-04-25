@@ -69,10 +69,13 @@ module.exports = (sequelize, DataTypes) => {
                     let updatedArt = [];
 
                     if((!_.isNil(savedArt) || !_.isEmpty(savedArt)) && !_.includes(savedArt, artToAdd)){
-                        updatedArt = [...savedArt].concat([artToAdd]);
+                        console.log("Adding to array with values:\n");
+                        updatedArt = _.cloneDeep(savedArt);
+                        updatedArt.push(artToAdd);
                     }
-                    else if(!_.isNil(savedArt) || !_.isEmpty(savedArt)){
-                        updatedArt = [artToAdd];
+                    else if(_.isNil(savedArt) || _.isEmpty(savedArt)){
+                        console.log("Adding to originally null array:\n");
+                        updatedArt.push(artToAdd);
                     }
 
                     const updatedUserArt = await this.update(
@@ -160,18 +163,20 @@ module.exports = (sequelize, DataTypes) => {
 
                     let updatedWallImgs = [];
                     if(!_.isNil(wallImages) || !_.isEmpty(wallImages)){
-                        updatedWallImgs = [...wallImages].concat(wallImagesToAdd);
+                        updatedWallImgs = _.cloneDeep(wallImages);
+                        updatedWallImgs.push(wallImagesToAdd);
                     }
                     else{
-                        updatedWallImgs = wallImagesToAdd;
+                        updatedWallImgs.push(wallImagesToAdd);
                     }
 
                     let updatedOverheadImgs = [];
                     if(!_.isNil(overheadImages) || !_.isEmpty(overheadImages)){
-                        updatedOverheadImgs = [...overheadImages].concat(overheadImagesToAdd);
+                        updatedOverheadImgs = _.cloneDeep(overheadImages);
+                        updatedOverheadImgs.push(overheadImagesToAdd);
                     }
                     else{
-                        updatedOverheadImgs = overheadImagesToAdd;
+                        updatedOverheadImgs.push(overheadImagesToAdd);
                     }
 
                     const updatedAllUserImages = await this.update(
@@ -198,7 +203,7 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
-        static async updateUserWallImages(userId, userPhotos, unique ){
+        static async updateUserWallImages(userId, wallImagesToAdd, unique ){
             try {
                 const result = await sequelize.transaction(async (t) => {
 
@@ -213,10 +218,11 @@ module.exports = (sequelize, DataTypes) => {
 
                     let updatedWallImgs = [];
                     if(!_.isNil(wallImages) || !_.isEmpty(wallImages)){
-                        updatedWallImgs = [...wallImages].concat(userPhotos);
+                        updatedWallImgs = _.cloneDeep(wallImages);
+                        updatedWallImgs.push(wallImagesToAdd);
                     }
                     else{
-                        updatedWallImgs = userPhotos;
+                        updatedWallImgs.push(wallImagesToAdd);
                     }
                     const updatedUserWallImgs = await this.update(
                         {
@@ -241,7 +247,7 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
-        static async updateUserOverheadImages(userId, userPhotos, unique ){
+        static async updateUserOverheadImages(userId, overheadImagesToAdd, unique ){
             try {
                 const result = await sequelize.transaction(async (t) => {
 
@@ -256,10 +262,11 @@ module.exports = (sequelize, DataTypes) => {
 
                     let updatedOverheadImgs = [];
                     if(!_.isNil(overheadImages) || !_.isEmpty(overheadImages)){
-                        updatedOverheadImgs = [...overheadImages].concat(userPhotos);
+                        updatedOverheadImgs = _.cloneDeep(overheadImages);
+                        updatedOverheadImgs.push(overheadImagesToAdd);
                     }
                     else{
-                        updatedOverheadImgs = userPhotos;
+                        updatedOverheadImgs.push(overheadImagesToAdd);;
                     }
                     const updatedUserOverheadImgs = await this.update(
                         {

@@ -44,10 +44,6 @@ module.exports = {
                     fs.readFileSync(__dirname + '/ca-cert.crt'),
             }
         },
-        // ssl: {
-        //     rejectUnauthorized: false,
-        //     ca: fs.readFileSync(__dirname + '/ca-cert.crt')
-        // },
         define: {
             underscored: true
         }
