@@ -78,6 +78,10 @@ module.exports = (sequelize, DataTypes) => {
                         updatedArt.push(artToAdd);
                     }
 
+                    if(updatedArt.length === 0){
+                        return user;
+                    }
+
                     const updatedUserArt = await this.update(
                         {
                             savedArt: updatedArt,
@@ -147,6 +151,7 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
+        
         static async updateAllUserImages(userId, wallImagesToAdd, overheadImagesToAdd, unique ){
             try {
                 const result = await sequelize.transaction(async (t) => {
@@ -159,41 +164,11 @@ module.exports = (sequelize, DataTypes) => {
                         throw new Error('UserId has null or undefined id');
                     }
 
-                    const { wallImages, overheadImages } = user.dataValues;
+                    await this.updateUserWallImages(userId, wallImagesToAdd, unique);
 
-                    let updatedWallImgs = [];
-                    if(!_.isNil(wallImages) || !_.isEmpty(wallImages)){
-                        updatedWallImgs = _.cloneDeep(wallImages);
-                        updatedWallImgs.push(wallImagesToAdd);
-                    }
-                    else{
-                        updatedWallImgs.push(wallImagesToAdd);
-                    }
+                    const finalUpdatedUser  = await this.updateUserOverheadImages(userId, overheadImagesToAdd, unique);
 
-                    let updatedOverheadImgs = [];
-                    if(!_.isNil(overheadImages) || !_.isEmpty(overheadImages)){
-                        updatedOverheadImgs = _.cloneDeep(overheadImages);
-                        updatedOverheadImgs.push(overheadImagesToAdd);
-                    }
-                    else{
-                        updatedOverheadImgs.push(overheadImagesToAdd);
-                    }
-
-                    const updatedAllUserImages = await this.update(
-                        {
-                            wallImages: updatedWallImgs,
-                            overheadImages: updatedOverheadImgs,
-                        },
-                        {
-                            returning: true,
-                            where: {
-                                id: userId,
-                                uniqueId: unique,
-                            },
-                            transaction: t,
-                        }
-                    );
-                    return updatedAllUserImages;
+                    return user;
                 });
                 // If the execution reaches this line, the transaction has been committed successfully
                 // `result` is whatever was returned from the transaction callback (the `user`, in this case)
@@ -224,6 +199,11 @@ module.exports = (sequelize, DataTypes) => {
                     else{
                         updatedWallImgs.push(wallImagesToAdd);
                     }
+
+                    if(updatedWallImgs.length === 0){
+                        return user;
+                    }
+
                     const updatedUserWallImgs = await this.update(
                         {
                             wallImages: updatedWallImgs,
@@ -267,6 +247,9 @@ module.exports = (sequelize, DataTypes) => {
                     }
                     else{
                         updatedOverheadImgs.push(overheadImagesToAdd);;
+                    }
+                    if(updatedOverheadImgs.length === 0){
+                        return user;
                     }
                     const updatedUserOverheadImgs = await this.update(
                         {
