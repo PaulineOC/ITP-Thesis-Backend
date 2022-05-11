@@ -109,6 +109,91 @@ router.patch('/upload-wall-images/', async function(req, res, next){
 
 });
 
+router.patch('/upload-all-images', async function(req, res, next){
+  const { user } = req.body;
+  console.log("Upload screenshots for user: ", user.id, user.uniqueId, user.wallImagesToSave.length);
+
+  if(!user.wallImagesToSave || !user.overheadImagesToSave){
+    res.status(400);
+    res.send(new Error('WallImages or overheadImages not passed in'));
+  }
+  const allUploadedWallImagesPromises = [];
+  const allUploadedOverheadImagesPromises = [];
+
+  user.wallImagesToSave.forEach((imgString, ind)=>{
+    const buf = Buffer.from(imgString.replace(/^data:image\/\w+;base64,/, ""),'base64');
+    const potentialURL = `${user.username}-${user.id}-wall-${ind}`;
+    const data = {
+      Key: potentialURL,
+      Body: buf,
+      ContentEncoding: 'base64',
+      ContentType: 'image/png',
+      ACL: 'public-read'
+    };
+    const newPromise = s3.putObject(data).promise();
+    allUploadedWallImagesPromises.push({key: potentialURL, promise : newPromise});
+  });
+
+  user.overheadImagesToSave.forEach((imgString, ind)=>{
+    const buf = Buffer.from(imgString.replace(/^data:image\/\w+;base64,/, ""),'base64');
+    const potentialURL = `${user.username}-${user.id}-overhead-${ind}`;
+    const data = {
+      Key: potentialURL,
+      Body: buf,
+      ContentEncoding: 'base64',
+      ContentType: 'image/png',
+      ACL: 'public-read'
+    };
+    const newPromise = s3.putObject(data).promise();
+    allUploadedOverheadImagesPromises.push({key: potentialURL, promise : newPromise});
+  });
+
+  Promise.all(allUploadedWallImagesPromises).then(async function(values) {
+    if(!values || values.length !== user.wallImagesToSave.length){
+      console.log("Something is weird ");
+    }
+    else{
+      console.log("Successfully finished:", values.length);
+      const finalImgLinks = [];
+      values.forEach((item, ind)=>{
+        const fileName = allUploadedWallImagesPromises[ind].key;
+        const url = `https://msrainwater-17-itp-thesis-2022-space.nyc3.digitaloceanspaces.com/${fileName}`;
+        finalImgLinks.push(url);
+      });
+      const updatedUser = await UserModel.updateUserWallImages(
+          user.id,
+          finalImgLinks,
+          user.uniqueId
+      );
+
+      Promise.all(allUploadedOverheadImagesPromises).then(async function(values) {
+        if(!values || values.length !== user.overheadImagesToSave.length){
+          console.log("Something is weird - overhead ");
+        }
+        else{
+          console.log("Successfully finished:", values.length);
+          const finalOverheadImgLinks = [];
+          values.forEach((item, ind)=>{
+            const fileName = allUploadedOverheadImagesPromises[ind].key;
+            const url = `https://msrainwater-17-itp-thesis-2022-space.nyc3.digitaloceanspaces.com/${fileName}`;
+            finalOverheadImgLinks.push(url);
+          });
+          const updatedUser = await UserModel.updateUserOverheadImages(
+              user.id,
+              finalOverheadImgLinks,
+              user.uniqueId
+          );
+          res.send({user: updatedUser});
+        }
+      });
+
+
+
+
+    }
+  });
+
+});
 
 router.get('/get/:userId', async function(req, res, next){
   const { userId } = req.params;

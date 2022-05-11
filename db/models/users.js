@@ -151,7 +151,6 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
-        
         static async updateAllUserImages(userId, wallImagesToAdd, overheadImagesToAdd, unique ){
             try {
                 const result = await sequelize.transaction(async (t) => {
@@ -178,7 +177,7 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
-        static async updateUserWallImages(userId, wallImagesToAdd, unique ){
+        static async updateUserWallImages(userId, wallImagesToAdd, unique){
             try {
                 const result = await sequelize.transaction(async (t) => {
 
